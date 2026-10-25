@@ -1,6 +1,6 @@
 id,priority,feature,status,notes
 F-001,must,Manual entry of filament price and grams,observed,"Reference calculates material cost proportionally; app must accept independent user values."
-F-002,must,Import local G-code from multiple slicers through parser adapters,partially-validated,"One local Anycubic Kobra X / Anycubic Slicer Next 2.0.0.3 sample contains time, aggregate and per-material usage metadata; no parser is implemented yet."
+F-002,must,Import local G-code from multiple slicers through parser adapters,prototype-not-validated,"A streaming metadata parser prototype now targets Anycubic Kobra X / Anycubic Slicer Next 2.0.0.3; code has not been validated, and other slicers remain future adapters."
 F-003,must,Edit imported values manually,planned,"Imported metadata must remain editable and its source/confidence should be visible."
 F-004,must,Print duration in hours and minutes,observed,"Minutes are bounded from 0 to 59 in the reference."
 F-005,must,Average printer power in watts,observed,"Reference offers indicative model shortcuts; users need manual entry."
@@ -13,7 +13,7 @@ F-011,must,Packaging and shipping configuration,observed,"Packaging joins cost; 
 F-012,must,Profit as percentage or fixed currency amount,observed,"The reference supports both modes."
 F-013,must,Sales fees and taxes,observed,"Applied to final price by grossing up the cost-plus-profit amount."
 F-014,must,Cost breakdown and real margin result,observed,"Show component totals, sale price, profit and margin."
-F-015,must,Generate editable quote as PDF,observed,"Quote includes issuer, customer, description, material, quantity, delivery, payment, discounts and notes."
+F-015,could,Generate editable quote as PDF,out-of-scope,"Observed on the reference site but explicitly excluded from the initial calc3D app scope."
 F-016,must,Offline local calculation and file processing,planned,"Do not upload G-code or quote data by default."
 F-017,must,Windows desktop distribution,planned,"First target platform requested by owner."
 F-018,must,Keep path to future macOS support,planned,"Second target platform requested by owner."
@@ -24,4 +24,5 @@ F-022,should,Accessible keyboard-first interface,planned,"Support keyboard navig
 F-023,should,Publish contributor documentation and project license,partially-done,"MIT selected; contributor guide drafted, but project workflow still needs a stack and CI."
 F-024,could,Additional manufacturing materials/processes,planned,"Potential future expansion beyond filament-based FDM printing."
 F-025,could,Export calculation data to CSV or JSON,planned,"Useful for bookkeeping and open workflows."
-F-026,must,Calculate costs for multiple materials in one print,planned,"Kobra X is a multicolor target; sum each material cost when metadata is available."
+F-026,must,Calculate costs for multiple materials in one print,prototype-not-validated,"The local calculation core sums material cost by spool; not yet reviewed or validated."
+F-027,must,Calculate energy wear failures fees and sale price from explicit inputs,prototype-not-validated,"A dependency-free local formula module exists; state tariff data and validation remain pending."

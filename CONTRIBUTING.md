@@ -1,6 +1,8 @@
 # Como contribuir
 
-Obrigado pelo interesse no calc3D. O projeto está em planejamento; leia o [README](README.md), o [reconhecimento funcional](replica/recon.md) e as [decisões pendentes](docs/decisions.md) antes de propor mudanças.
+Obrigado pelo interesse no calc3D. O projeto está no início do protótipo; leia o [README](README.md), o [reconhecimento funcional](replica/recon.md) e as [decisões pendentes](docs/decisions.md) antes de propor mudanças.
+
+O aplicativo é desenvolvido em C++ com Qt Widgets e CMake. Para configurar o ambiente Windows e compilar o esqueleto atual, siga [Preparar o ambiente e compilar no Windows](docs/windows-development.md). O esqueleto ainda não integra leitura de G-code nem cálculo.
 
 ## Antes de abrir uma issue
 
@@ -17,7 +19,7 @@ Obrigado pelo interesse no calc3D. O projeto está em planejamento; leia o [READ
 4. Inclua ou atualize testes automatizados quando a base de código e a estratégia de testes estiverem definidas.
 5. Informe como verificou a mudança e quais limitações ainda existem.
 
-O fluxo de branches, convenção de commits, comandos de desenvolvimento e verificações obrigatórias serão detalhados após a escolha da tecnologia. As contribuições aceitas serão distribuídas sob a licença MIT deste repositório; ao enviar uma contribuição, confirme que tem o direito de submetê-la sob esses termos.
+O fluxo de branches, convenção de commits e verificações obrigatórias serão detalhados após a primeira versão funcional. As contribuições aceitas serão distribuídas sob a licença MIT deste repositório; ao enviar uma contribuição, confirme que tem o direito de submetê-la sob esses termos.
 
 ## Dados e privacidade
 

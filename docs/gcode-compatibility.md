@@ -1,12 +1,12 @@
 # Compatibilidade com G-code
 
-Este documento acompanha os fatiadores e impressoras cujos arquivos foram observados e validados. “Metadados observados” significa que encontramos os campos na amostra; não significa que já exista um parser implementado ou que todas as versões estejam cobertas.
+Este documento acompanha os fatiadores e impressoras cujos arquivos foram observados. “Metadados observados” significa que encontramos os campos na amostra; não significa que o parser esteja validado nem que todas as versões estejam cobertas.
 
 ## Amostra inicial
 
 | Impressora | Fatiador e versão | Extensão | Estado |
 |---|---|---|---|
-| Anycubic Kobra X | AnycubicSlicerNext 2.0.0.3 | `.gcode` | Uma amostra local inspecionada; os metadados necessários foram localizados. Parser e casos de erro ainda não implementados/testados. |
+| Anycubic Kobra X | AnycubicSlicerNext 2.0.0.3 | `.gcode` | Uma amostra local inspecionada; protótipo de parser implementado. Ainda não validado nem declarado compatível. |
 
 A amostra não foi copiada para este repositório. Ela tem cerca de 41 MB e 1,85 milhão de linhas; o parser deve processar arquivos em streaming e evitar carregar o G-code inteiro em memória. O arquivo contém thumbnail codificada em bloco de comentários, que deve ser ignorada durante a extração de metadados.
 
@@ -18,6 +18,22 @@ A amostra não foi copiada para este repositório. Ela tem cerca de 41 MB e 1,85
 - Uso por material em arrays (`filament used [g]`, `[mm]`, `[cm3]`), agregado (`total filament used [g]`) e custo calculado pelo slicer.
 - Tipo, cor e perfil do filamento em propriedades como `filament_type`, `filament_colour` e `filament_settings_id`.
 - Informações de troca/purga, incluindo `flush_volumes_*`, código de troca de ferramenta e configuração de wipe tower.
+
+O protótipo atual está em `src/gcode/parser.mjs`. Ele consome linhas de forma assíncrona, seleciona o tempo de `statistics.print_time` antes da última estimativa normal e retorna gramas por material, cores, tipos, os campos reconhecidos e avisos de inconsistência. Ele não lê arquivos por conta própria, calcula custo, nem declara compatibilidade validada.
+
+Exemplo de integração em Node.js (adaptador de leitura, não incluído no protótipo):
+
+```js
+import { createReadStream } from "node:fs";
+import { createInterface } from "node:readline";
+import { parseGcodeLines } from "./src/gcode/parser.mjs";
+
+const lines = createInterface({
+  input: createReadStream(filePath),
+  crlfDelay: Infinity,
+});
+const metadata = await parseGcodeLines(lines);
+```
 
 As listas são representadas por convenções diferentes (valores separados por vírgula, ponto e vírgula ou campos serializados em JSON). O parser precisa preservar a ordem dos elementos e validar se quantidades, cores e tipos têm a mesma cardinalidade antes de associá-los. Não inventar associação quando os índices estiverem ausentes ou inconsistentes.
 

@@ -1,0 +1,26 @@
+# CMake
+/build/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+
+# Visual Studio
+.vs/
+*.sln
+*.suo
+*.user
+*.VC.db
+*.VC.VC.opendb
+
+# Compiled outputs
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+*.o
+*.app/
+*.dSYM/
