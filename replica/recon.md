@@ -4,6 +4,8 @@
 
 Registrar os fluxos e requisitos observáveis na calculadora de referência para orientar uma aplicação própria de orçamento de impressão 3D. Este é um levantamento funcional; não contém implementação. A referência consultada foi [Calculadora de Custo de Impressão 3D da 3D Prime](https://3dprime.com.br/calculadora-de-custo-de-impressao-3d/), em 25/10/2026.
 
+**Escopo decidido para o calc3D:** aplicativo desktop simples, com uma tela para abrir/selecionar G-code, revisar e preencher campos e ver os resultados. A geração de PDF e o formulário de orçamento observados na referência não fazem parte do MVP.
+
 O levantamento segue a abordagem de reconhecimento do projeto [replica-skill](https://github.com/Jakeschincariol/replica-skill): documentar funcionalidades e fluxos em estilo clean-room. A aplicação futura deverá ter nome, identidade visual, textos e implementação próprios. Este documento não recomenda copiar marca, código, imagens, textos ou APIs privadas da referência.
 
 ## Visão do produto pretendido
@@ -22,12 +24,12 @@ Aplicação local para calcular custo e preço de venda de peças impressas em 3
 - Etapa posterior: suporte a macOS.
 - Funcionamento offline para cálculos e leitura local dos arquivos; fontes tarifárias poderão exigir atualização online, mas valores já obtidos devem continuar disponíveis localmente.
 - Interface em português brasileiro e valores em reais, com entradas manuais disponíveis para todas as estimativas.
-- Dados de G-code e dados do orçamento devem ser tratados localmente por padrão. A referência informa que o logotipo enviado ao orçamento fica no navegador; a política da aplicação própria deve ser definida explicitamente.
+- G-code e valores informados devem ser processados localmente por padrão.
 - O projeto adotou MIT; a versão mínima do Windows/macOS e o mecanismo de distribuição continuam pendentes.
 
 ## Mapa da tela observada
 
-Uma tela principal com cabeçalho/título, explicação e dois atalhos de ajuda (metodologia e tutorial), seguida por um formulário dividido em etapas. A área final apresenta o resultado atualizado ao editar os valores e um formulário separado para gerar orçamento em PDF. O site de referência também contém cabeçalho e rodapé de comércio eletrônico; esses elementos promocionais não são necessários para a aplicação local.
+Na referência, há cabeçalho, formulário dividido em etapas, resultado atualizado e formulário separado para gerar orçamento em PDF. O calc3D seguirá um fluxo mais simples de tela única e não implementará o formulário de PDF no MVP. O cabeçalho e o rodapé de comércio eletrônico da referência não são necessários para a aplicação local.
 
 ### Seções do formulário
 
@@ -154,8 +156,7 @@ Não fixar esses valores como verdade atual. Definir uma fonte oficial verificá
 - Configurar embalagem/frete e escolher se o frete é repassado ou incluído no custo.
 - Calcular preço com lucro percentual ou valor fixo e taxas sobre a venda; discriminar custo, lucro, preço e margem.
 - Validar entradas e explicar erros, inclusive divisões inválidas e metadados de G-code ausentes.
-- Executar sem conta e sem enviar G-code ou dados do orçamento para um servidor.
-- Exportar orçamento PDF com campos editáveis e sem exigir logotipo.
+- Executar sem conta e sem enviar G-code ou valores informados para um servidor.
 - Funcionar em Windows; manter decisões de plataforma e empacotamento compatíveis com futura versão macOS.
 
 ### Should have
@@ -189,7 +190,7 @@ Não fixar esses valores como verdade atual. Definir uma fonte oficial verificá
 - **Precisão de energia:** watts médios dependem de impressora, material, temperatura, aquecimento e fase da impressão; leitura por estado não substitui medição nem conta de energia.
 - **Regras financeiras:** definir arredondamento e tratamento de falhas/taxas, e validar fórmulas com exemplos independentes.
 - **Privacidade:** tratar G-code como arquivo potencialmente confidencial; processamento local, retenção e telemetria devem ser explicitados.
-- **Orçamento PDF:** decidir geração local, fontes, moeda/localização, dados mínimos e tratamento seguro do logo.
+- **PDF:** observado na referência, mas explicitamente fora do escopo do MVP do calc3D.
 - **Open source:** licença MIT escolhida para este projeto; manter avisos de copyright/licença e revisar termos de bibliotecas, perfis e ativos de terceiros antes de distribuição.
 - **Marca e direitos:** adotar nome, interface, ícones, textos e paleta próprios; não reutilizar ativos ou conteúdo da loja de referência.
 
