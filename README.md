@@ -2,7 +2,7 @@
 
 Aplicativo desktop local para calcular e apresentar na tela o custo de impressões 3D. A primeira plataforma planejada é Windows; macOS virá depois. A pessoa poderá abrir ou selecionar um G-code, revisar os dados importados, preencher os campos que faltam e ver o resultado atualizado na mesma tela.
 
-> **Status: protótipos locais.** A arquitetura escolhida é C++ com Qt Widgets e CMake. Os módulos em `src/` são protótipos de referência em JavaScript; a interface e os módulos C++ ainda estão no início e precisam de revisão e validação.
+> **Status: protótipo local.** O núcleo de cálculo em C++ aceita valores manuais, importa tempo e consumo de metadados G-code e inclui tarifas médias de referência por UF. O parser e as tarifas ainda precisam de validação com amostras e fontes oficiais. Persistência e testes automatizados seguem pendentes.
 
 ## O que está sendo planejado
 
@@ -36,4 +36,15 @@ O projeto usa a licença [MIT](LICENSE). Ela permite uso, modificação e redist
 
 ## Estado atual
 
-O projeto tem requisitos documentados e um esqueleto Qt Widgets/CMake ainda não compilado. Os protótipos JavaScript em `src/gcode/` e `src/calculation/` servem como referência para a migração a C++. A primeira impressora alvo é a Anycubic Kobra X; ainda faltam validar o parser, completar a tela e pesquisar fontes tarifárias. Veja o [plano de desenvolvimento](docs/development-plan.md).
+O projeto tem requisitos documentados e um aplicativo Qt Widgets/CMake para Windows. A tela permite informar vários materiais, tempo, energia, desgaste e outros custos, com atualização imediata do detalhamento e do preço sugerido. O parser C++ lê metadados G-code em fluxo e preenche duração, gramas por material e identificadores disponíveis; confira os avisos e revise os valores importados antes de usar. A compatibilidade ainda não foi validada com uma coleção de amostras. Veja o [plano de desenvolvimento](docs/development-plan.md).
+
+Com as dependências instaladas, compile e execute pelo PowerShell na raiz do projeto:
+
+```powershell
+.\scripts\build.ps1
+.\scripts\run.ps1
+```
+
+Para iniciar o aplicativo com duplo clique no Explorador de Arquivos, abra `run.cmd` na raiz do repositório. Para depurar, continue usando `.\scripts\run.ps1 -Configuration Debug` no PowerShell.
+
+O [guia Windows](docs/windows-development.md) explica a instalação das ferramentas, a seleção do Qt e a compilação em Debug.

@@ -25,11 +25,14 @@
 - [x] Criar protótipo do modelo de cálculo independente da interface; validação ainda pendente.
 - [ ] Revisar e validar o protótipo local `src/calculation/calculate-cost.mjs` com exemplos conhecidos antes de integrar à interface.
 - [ ] Implementar validação e testes de unidade para cada componente e fórmula.
-- [ ] Revisar e validar o protótipo local `src/gcode/parser.mjs` com amostras sintéticas e próprias antes de declarar suporte.
+- [x] Migrar a leitura de metadados G-code para C++ em streaming e conectar o tempo e materiais à interface; validação com amostras continua pendente.
+- [x] Reconhecer o cabeçalho Bambu Studio, o tempo estimado total, o peso total e filtrar perfis pelo índice de ferramenta usado no G-code.
+- [ ] Revisar e validar o parser com amostras sintéticas e próprias antes de declarar suporte.
 - [ ] Implementar adaptadores adicionais de fatiador após validação do primeiro parser.
 - [ ] Implementar catálogo editável de materiais, impressoras e tarifas.
-- [ ] Migrar os protótipos de cálculo e G-code de JavaScript para C++ e ligar os campos da tela ao cálculo.
-- [x] Criar esqueleto local da tela Qt Widgets e da configuração CMake; ainda sem parser/cálculo integrados.
+- [x] Migrar o núcleo de cálculo de JavaScript para C++ e ligar os campos manuais da tela ao cálculo.
+- [x] Criar a tela Qt Widgets e a configuração CMake; cálculo e importação de metadados foram integrados nas etapas seguintes.
+- [x] Preparar ambiente Windows MSVC/Qt, compilar em Release e Debug e verificar a inicialização dos executáveis.
 - [x] Remover geração de PDF do escopo inicial; apresentar o detalhamento e o preço calculado na própria tela.
 
 ## Fase 3 — Preparar distribuição e comunidade
