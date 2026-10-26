@@ -1,12 +1,13 @@
 # Compatibilidade com G-code
 
-Este documento acompanha os fatiadores e impressoras cujos arquivos foram observados. “Metadados observados” significa que encontramos os campos na amostra; não significa que o parser esteja validado nem que todas as versões estejam cobertas.
+Este documento acompanha os fatiadores e impressoras cujos arquivos foram observados. “Metadados observados” significa que encontramos os campos na amostra; não significa que o parser esteja validado nem que todas as versões estejam cobertas. A implementação C++ lê comentários linha a linha, sem executar comandos G-code, e a tela importa os campos reconhecidos para edição manual.
 
 ## Amostra inicial
 
 | Impressora | Fatiador e versão | Extensão | Estado |
 |---|---|---|---|
-| Anycubic Kobra X | AnycubicSlicerNext 2.0.0.3 | `.gcode` | Uma amostra local inspecionada; protótipo de parser implementado. Ainda não validado nem declarado compatível. |
+| Anycubic Kobra X | AnycubicSlicerNext 2.0.0.3 | `.gcode` | Uma amostra local inspecionada; parser C++ e integração com a tela implementados. Ainda não validado nem declarado compatível. |
+| Bambu Lab A1 | Bambu Studio 02.08.02.61 | `.gcode` | Uma amostra local inspecionada; três perfis configurados, uma ferramenta ativa, tempo e peso total reconhecidos. Multi-material ainda precisa de amostras e validação. |
 
 A amostra não foi copiada para este repositório. Ela tem cerca de 41 MB e 1,85 milhão de linhas; o parser deve processar arquivos em streaming e evitar carregar o G-code inteiro em memória. O arquivo contém thumbnail codificada em bloco de comentários, que deve ser ignorada durante a extração de metadados.
 
@@ -19,7 +20,13 @@ A amostra não foi copiada para este repositório. Ela tem cerca de 41 MB e 1,85
 - Tipo, cor e perfil do filamento em propriedades como `filament_type`, `filament_colour` e `filament_settings_id`.
 - Informações de troca/purga, incluindo `flush_volumes_*`, código de troca de ferramenta e configuração de wipe tower.
 
-O protótipo atual está em `src/gcode/parser.mjs`. Ele consome linhas de forma assíncrona, seleciona o tempo de `statistics.print_time` antes da última estimativa normal e retorna gramas por material, cores, tipos, os campos reconhecidos e avisos de inconsistência. Ele não lê arquivos por conta própria, calcula custo, nem declara compatibilidade validada.
+O parser C++ está em `src/gcode/gcode_metadata.cpp` e seu adaptador de interface está em `src/app/main_window.cpp`. Ele seleciona o tempo de `statistics.print_time` antes da última estimativa normal e retorna gramas por material, cores, tipos, perfis, campos reconhecidos e avisos de inconsistência. O app preserva os preços por kg, arredonda o tempo exibido para minutos e usa os segundos importados no cálculo até que o usuário edite os campos de tempo. O parser JavaScript `src/gcode/parser.mjs` permanece como referência. Nenhum dos dois declara compatibilidade validada.
+
+### Bambu Studio observado
+
+A amostra Bambu Studio 02.08.02.61 da Bambu Lab A1 usa `; BambuStudio <versão>`, `; model printing time: ...; total estimated time: ...`, `; total filament weight [g] : ...` e listas de `filament_type`, `filament_colour` e `filament_settings_id`. Apesar de ter três perfis configurados, o arquivo seleciona apenas o índice 0 (`M620 S0A`/`T0`) e declara `; filament: 1`. O parser usa esses seletores para manter apenas o material ativo e atribui a ele o peso total de 14.75 g. Se mais de uma ferramenta estiver ativa e o arquivo não trouxer gramas individuais, a divisão continua manual.
+
+A mesma amostra declara `total filament volume [cm^3] : 11704.39` junto a 14.75 g de peso e densidade de 1.26 g/cm³. Como a unidade indicada não é coerente com os demais valores, o aplicativo não usa esse campo para estimar peso.
 
 Exemplo de integração em Node.js (adaptador de leitura, não incluído no protótipo):
 
@@ -37,18 +44,17 @@ const metadata = await parseGcodeLines(lines);
 
 As listas são representadas por convenções diferentes (valores separados por vírgula, ponto e vírgula ou campos serializados em JSON). O parser precisa preservar a ordem dos elementos e validar se quantidades, cores e tipos têm a mesma cardinalidade antes de associá-los. Não inventar associação quando os índices estiverem ausentes ou inconsistentes.
 
-## Regras de importação propostas
+## Comportamento de importação implementado
 
-1. Procurar metadados reconhecidos pelo adaptador do fatiador e produzir um resultado estruturado com origem, valor e confiança por campo.
-2. Preferir o resumo final/`statistics` ao primeiro texto de estimativa encontrado. Se os campos finais divergirem, mostrar a divergência para validação manual.
-3. Importar massa por material e total quando presentes. Não somar automaticamente valores parciais e totais duas vezes.
-4. Tratar preço/custo embutido pelo slicer como informativo e ignorá-lo no orçamento: o preço por kg configurado pelo usuário é a fonte do cálculo do aplicativo.
-5. Associar material e cor apenas quando a ordem dos arrays puder ser validada. Permitir corrigir nomes, preços e gramas manualmente.
-6. Se faltarem metadados, oferecer campos manuais sem interromper o cálculo.
-7. Não executar comandos G-code. Ler o arquivo como texto e extrair apenas os campos necessários; ignorar blocos binários/textuais não relevantes, como thumbnails.
+1. Procurar metadados reconhecidos no cabeçalho e no bloco `statistics`; o tempo do bloco tem preferência sobre a última estimativa normal.
+2. Importar gramas por material e associar tipo, cor e perfil pela ordem das listas quando disponíveis. Se só houver total em gramas, preencher um material com esse total.
+3. Preservar preços por kg existentes. O custo embutido pelo slicer é ignorado no orçamento.
+4. Manter os campos editáveis; ao alterar tempo, o cálculo usa o valor exibido em horas e minutos. Segundos do tempo importado são mantidos até essa edição.
+5. Mostrar avisos para metadados ausentes, incompatibilidade do perfil inicial ou divergências encontradas.
+6. Não executar comandos G-code. Ler o arquivo como texto, linha a linha, e ignorar blocos não relevantes, como thumbnails.
 
 ## Próximas amostras
 
-O próximo passo de compatibilidade é validar mais arquivos próprios da Kobra X exportados pelo Anycubic Slicer Next, incluindo um trabalho de uma cor e outro multicolor, e confirmar a associação entre massa, tipo e cor. Depois, priorizar arquivos da Kobra X exportados por AC Slicer, PrusaSlicer e Cura. Só marcar cada combinação como suportada quando houver amostras representativas, casos inválidos e testes do parser.
+O próximo passo é validar mais arquivos próprios da Kobra X exportados pelo Anycubic Slicer Next e da Bambu Lab A1 exportados pelo Bambu Studio, com trabalhos de uma cor e multicolor. Depois, ampliar os adaptadores para AC Slicer, OrcaSlicer, PrusaSlicer, Cura e outros. O núcleo reconhece campos comuns mesmo em modelos de impressora ainda não catalogados; o suporte detalhado depende dos metadados que cada combinação de impressora e fatiador grava. Só marcar cada combinação como suportada após validar amostras representativas, casos inválidos e o parser.
 
 Não publicar arquivos de impressão reais sem revisão do titular. Para o repositório, preferir fixtures sintéticas ou amostras pequenas e anonimizadas, com permissão para redistribuição.

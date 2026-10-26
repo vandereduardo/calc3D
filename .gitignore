@@ -1,4 +1,7 @@
 # CMake
+/.tools/
+/aqtinstall.log
+/CMakeUserPresets.json
 /build/
 /cmake-build-*/
 CMakeCache.txt
